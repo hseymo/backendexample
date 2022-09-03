@@ -32,6 +32,7 @@ User.init({
 },{
     hooks:{
         beforeCreate: async (userData) => {
+            // salt&hash password and change email to lower case
             userData.email = await userData.email.toLowerCase();
             userData.password = await bcrypt.hash(userData.password,5);
             return userData;
@@ -42,6 +43,7 @@ User.init({
         }
     },
     sequelize,
+    // embracing sequelize defaults; if modifying would change here
 });
 
 module.exports=User

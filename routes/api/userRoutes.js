@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+// destructuring models
 const {User,Blog} = require("../models/");
 const bcrypt  = require("bcrypt");
 
@@ -16,6 +17,8 @@ router.get("/", (req, res) => {
       res.status(500).json({ msg: "an error occured", err });
     });
 });
+
+// logout
 router.get("/logout",(req,res)=>{
   req.session.destroy();
   res.redirect("/")
@@ -72,35 +75,40 @@ router.post("/login", (req, res) => {
 //update user
 router.put("/:id", async (req, res) => {
   try {
-    const userData = await User.update(req.body, {
+    const updatedUser = await User.update(
+      req.body, {
       where: {
         id: req.params.id
       },
       individualHooks: true
     });
-    if (!userData[0]) {
+    if (!updatedUser[0]) {
       res.status(404).json({msg:"error", err:err})
     }
+    res.json(updatedUser)
   } catch {
     console.log(err);
     res.status(500).json({ msg: "an error occured", err });
   }
 });
 
-//delete a user
-// router.delete("/:id", (req, res) => {
-//   User.destroy({
-//     where: {
-//       id: req.params.id
-//     }
-//   }).then(delUser => {
-//     res.json(delUser);
-//   })
-//   .catch(err => {
-//     console.log(err);
-//     res.status(500).json({ msg: "an error occured", err });
-//   });
-// });
+// delete a user
+router.delete("/:id", (req, res) => {
+  User.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(delUser => {
+    if (!delUser[0]) {
+      res.status(404).json({msg:"no user exists", err:err})
+    }
+    res.json(delUser);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({ msg: "an error occured", err });
+  });
+});
 
 
 module.exports = router;
