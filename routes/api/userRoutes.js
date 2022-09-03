@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {User,Blog} = require("../models/");
-const bcrypt  = require("bcrypt");
+// const bcrypt  = require("bcrypt");
 
 //find all
 router.get("/", (req, res) => {
@@ -24,6 +24,9 @@ router.get("/logout",(req,res)=>{
 router.get("/:id", (req, res) => {
   User.findByPk(req.params.id,{})
     .then(dbUser => {
+      if (!dbUser){
+        res.status(404).json({msg:"error", err:err})
+      }
       res.json(dbUser);
     })
     .catch(err => {
