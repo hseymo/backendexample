@@ -9,7 +9,18 @@ User.init({
     username: {
          type: DataTypes.STRING,
          allowNull:false,
-         unique:true
+         unique:true,
+         validate: {
+            isAlphanumeric: true
+         }
+    },
+    email: {
+        type: DataTypes.STRING,
+        unique: true, 
+        allowNull: false,
+        validate: {
+            isEmail: true,
+        }
     },
     password:{
         type:DataTypes.STRING,
@@ -20,9 +31,14 @@ User.init({
     }
 },{
     hooks:{
-        beforeCreate:async userdata=>{
-            userdata.password = await bcrypt.hash(userdata.password,5)
-            return userdata
+        beforeCreate: async (userData) => {
+            userData.email = await userData.email.toLowerCase();
+            userData.password = await bcrypt.hash(userData.password,5);
+            return userData;
+        },
+        beforeUpdate: async (updatedUserData) => {
+            updatedUserData.email = await updatedUserData.email.toLowerCase();
+            return updatedUserData;
         }
     },
     sequelize,

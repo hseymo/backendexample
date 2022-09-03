@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+// use dotenv to hide values
 require('dotenv').config();
 
 let sequelize;
